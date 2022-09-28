@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr" >
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<title>Snake</title>
+     <script async defer src="https://buttons.github.io/buttons.js"></script>
+     <style type="text/css">
+body {
+     margin: 0;
+     overflow: hidden;
+}
+
+body > p {
+     width: 100%;
+     text-align: center;
+     font-family: arial;
+}
+
+body > canvas {
+     margin: 0 10vw;
+     width: 80vw;
+}
+
+body > div {
+     display: flex;
+     margin: auto;
+     width: 400px
+}
+
+body > div > input {
+     margin: 0 25px;
+     width: 150px;
+     height: 30px;
+}
+
+body > #github-button {
+     width: 40vw;
+     margin: 5vh 30vw;
+     justify-content: space-around;
+}
+
+
+     </style>
+</head>
+
+<body onkeydown="controle(event.keyCode);">
+     <p id="score">score: 0</p>
+	<canvas id="snake" width="1000" height="500"></canvas>
+     <div id="github-button">
+          <a class="github-button" href="https://github.com/augustin7698/snake" data-color-scheme="no-preference: light; light: light; dark: dark_dimmed;" data-size="large" aria-label="Star augustin7698/snake on GitHub">Star</a>
+          <a class="github-button" href="https://github.com/augustin7698" data-color-scheme="no-preference: light; light: light; dark: dark_dimmed;" data-size="large" aria-label="Follow @augustin7698 on GitHub">Follow @augustin7698</a>
+     </div>
+</body>
+<script type="text/javascript">
+
+function init() {
+     canvas = {
+          "canvas": document.getElementById("snake"),
+          "canvasContext": document.getElementById("snake").getContext("2d"),
+          "width": document.getElementById("snake").width,
+          "height": document.getElementById("snake").height,
+     }
+
+     stared = true; // étoile trouvé ?
+     score = 0;
+     document.getElementById('score').innerText = "score: 0"; // score à 0
+     snakebit = false; // le serpent s'est il passé dessus
+     square = 20; // size of squares
+     lastkey = [2,1]; // dernières commandes
+     keyable = true; // empécher le double click
+     mask = false; // empécher l'affichage de star
+
+
+     snake = [
+          [
+               Math.round((canvas.width / square) / 2),
+               Math.round(canvas.height / square - 3)
+          ], [
+               Math.round((canvas.width / square) / 2),
+               Math.round(canvas.height / square - 2)
+          ], [
+               Math.round((canvas.width / square) / 2),
+               Math.round(canvas.height / square - 1)
+          ]
+     ];
+
+     update();
+}
+
+
+function controle(key) { // sauvegarder les commandes
+     if ((key == 38 || key == 90) && keyable == true) { // top
+          lastkey.push(1);
+          keyable = false;
+     } else if ((key == 39 || key == 68) && keyable == true) { // right
+          lastkey.push(2);
+          keyable = false;
+     } else if ((key == 40 || key == 83) && keyable == true) { // down
+          lastkey.push(3);
+          keyable = false;
+     } else if ((key == 37 || key == 81) && keyable == true) { // left
+          lastkey.push(4);
+          keyable = false;
+     } else if (key == 27) { // escape
+          window.open("https://www.ecoledirecte.com", "_self")
+     }
+}
+
+
+
+
+
+
+
+function damier(star, snake) {
+     canvas.canvasContext.fillStyle = "black"; // background (noir)
+     canvas.canvasContext.fillRect(0, 0, canvas.width, canvas.height); // background (noir)
+
+     for (lines = 0; lines < canvas.width / square; lines++) { // création de chaques cases
+          for (columns = 0; columns < canvas.height / square; columns++) {
+               result = false;
+               for (snk = 0; snk < snake.length; snk++) {
+                    if (snake[snk][0] == lines && snake[snk][1] == columns) {
+                         canvas.canvasContext.fillStyle = "black";
+                         if (snakebit == true) { // si le serpent s'est passé dessus: recommancer
+                              window.open("index.html","_self");
+                         } else snakebit = true;
+                         result = true;
+                    } else if (star[0] == lines && star[1] == columns) {
+                         if (mask) {
+                              canvas.canvasContext.fillStyle = "blue";
+                         }
+                         result = true;
+                    }
+               }
+               if (result == false) {
+                    canvas.canvasContext.fillStyle = "white";
+               }
+               snakebit = false;
+
+               canvas.canvasContext.fillRect(
+                    lines * square + 0.25, // first margin left
+                    columns * square + 0.25, // first margin right
+                    square * 0.95, // width
+                    square * 0.95, // height
+               );
+          }
+     }
+}
+
+function move() {
+     if (snake[0][0] == star[0] && snake[0][1] == star[1]) {
+          stared = true;
+          document.getElementById('score').innerText = "score: " + (score++ +1);  // ajout score + affichage
+     }
+
+     if (lastkey[lastkey.length-1] == 1) { // top
+          if (lastkey[lastkey.length-2] == 2 || lastkey[lastkey.length-2] == 4) { // verify precedent is right or left
+               keyable = true;
+               headx = snake[0][0]; // ajouter tete
+               heady = snake[0][1]-1;
+               if (heady < 0) heady = canvas.height / square -1;
+
+               snake = [[headx, heady]].concat(snake);
+               if (stared == false) {
+                    snake.pop(); // supprimer queu
+               }
+               
+          } else {
+               lastkey.pop(); // si move imposssible recommence
+               move();
+          }
+     } else if (lastkey[lastkey.length-1] == 2) { // right
+          if (lastkey[lastkey.length-2] == 1 || lastkey[lastkey.length-2] == 3) { // verify precedent is down or top
+               keyable = true;
+               headx = snake[0][0]+1; // ajouter tete
+               heady = snake[0][1];
+               if (headx >= canvas.width / square) headx = 0;
+
+               snake = [[headx, heady]].concat(snake);
+               if (stared == false) {
+                    snake.pop(); // supprimer queu
+               }
+          } else {
+               lastkey.pop(); // si move imposssible recommence
+               move();
+          }
+     } else if (lastkey[lastkey.length-1] == 3) { // down
+          if (lastkey[lastkey.length-2] == 2 || lastkey[lastkey.length-2] == 4) { // verify precedent is right or left
+               keyable = true;
+               headx = snake[0][0]; // ajouter tete
+               heady = snake[0][1]+1;
+               if (heady >= canvas.height / square) heady = 0;
+
+               snake = [[headx, heady]].concat(snake);
+               if (stared == false) {
+                    snake.pop(); // supprimer queu
+               }
+          } else {
+               lastkey.pop(); // si move imposssible recommence
+               move();
+          }
+     } else if (lastkey[lastkey.length-1] == 4) { // left
+          if (lastkey[lastkey.length-2] == 1 || lastkey[lastkey.length-2] == 3) { // verify precedent is down or top
+               keyable = true;
+               headx = snake[0][0]-1; // ajouter tete
+               heady = snake[0][1];
+               if (headx < 0) headx = canvas.width / square -1;
+
+               snake = [[headx, heady]].concat(snake);
+               if (stared == false) {
+                    snake.pop(); // supprimer queu
+               }
+          } else {
+               lastkey.pop(); // si move imposssible recommence
+               move();
+          }
+     }
+}
+
+
+
+async function update() {
+     if (stared) { // définit endroit aléatoire pour l'étoile si elle est trouvé
+          stared = false;
+          mask = true;
+          star = [
+               Math.round(Math.random() * ((canvas.width - square) / square)),
+               Math.round(Math.random() * ((canvas.height - square)  / square))
+          ];
+     }
+     
+
+     damier(star, snake);
+     await new Promise(resolve => setTimeout(resolve, 500));
+     move();
+     await new Promise(resolve => setTimeout(resolve, 10, 500));
+    
+
+     await new Promise(resolve => setTimeout(resolve, 75)); // wait for new gen
+
+     while (!document.hasFocus()) { // wait if document is'nt focused
+          await new Promise(resolve => setTimeout(resolve, 1000));
+     }
+     requestAnimationFrame(update);
+}
+
+init();
+
+console.log()
+</script>
+</html>
