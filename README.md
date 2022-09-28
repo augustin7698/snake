@@ -1,2 +1,4 @@
 # snake
-snake game in javascript
+sample snake game in javascript
+
+<img src="./images/snake.png"></img>
