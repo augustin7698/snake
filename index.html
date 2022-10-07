@@ -49,7 +49,6 @@ body > #github-button {
 	<canvas id="snake" width="1000" height="500"></canvas>
      <div id="github-button">
           <a class="github-button" href="https://github.com/augustin7698/snake" data-color-scheme="no-preference: light; light: light; dark: dark_dimmed;" data-size="large" aria-label="Star augustin7698/snake on GitHub">Star</a>
-          <a class="github-button" href="https://github.com/augustin7698" data-color-scheme="no-preference: light; light: light; dark: dark_dimmed;" data-size="large" aria-label="Follow @augustin7698 on GitHub">Follow @augustin7698</a>
      </div>
 </body>
 <script type="text/javascript">
@@ -74,6 +73,9 @@ function init() {
 
      snake = [
           [
+               Math.round((canvas.width / square) / 2),
+               Math.round(canvas.height / square - 4)
+          ], [
                Math.round((canvas.width / square) / 2),
                Math.round(canvas.height / square - 3)
           ], [
@@ -102,8 +104,6 @@ function controle(key) { // sauvegarder les commandes
      } else if ((key == 37 || key == 81) && keyable == true) { // left
           lastkey.push(4);
           keyable = false;
-     } else if (key == 27) { // escape
-          window.open("https://www.ecoledirecte.com", "_self")
      }
 }
 
@@ -129,7 +129,7 @@ function damier(star, snake) {
                          result = true;
                     } else if (star[0] == lines && star[1] == columns) {
                          if (mask) {
-                              canvas.canvasContext.fillStyle = "blue";
+                              canvas.canvasContext.fillStyle = "red";
                          }
                          result = true;
                     }
@@ -233,9 +233,7 @@ async function update() {
      
 
      damier(star, snake);
-     await new Promise(resolve => setTimeout(resolve, 500));
      move();
-     await new Promise(resolve => setTimeout(resolve, 10, 500));
     
 
      await new Promise(resolve => setTimeout(resolve, 75)); // wait for new gen
@@ -247,7 +245,5 @@ async function update() {
 }
 
 init();
-
-console.log()
 </script>
 </html>
