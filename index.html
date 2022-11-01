@@ -8,7 +8,7 @@
      <style type="text/css">
 body {
      margin: 0;
-     overflow: hidden;
+     overflow-x: hidden;
 }
 
 body > p {
@@ -40,15 +40,61 @@ body > #github-button {
      justify-content: space-around;
 }
 
+body > #mobile-commmand {
+     display: none;
+}
+
+/* mobile */
+@media screen and (max-width: 600px) {
+     body > p#command {
+          display: none;
+     }
+
+     body > #mobile-commmand {
+          display: block;
+          width: 80%;
+          margin: 0 10%;
+     }
+
+     body > #mobile-commmand > div {
+          display: flex;
+          justify-content: space-around;
+          width: 100%;
+          margin: 8px 0;
+     }
+
+     body > #mobile-commmand > div > button {
+          width: 25vw;
+          height: 25vw;
+          cursor: pointer;
+          font-size: 10vw;
+          border: 0;
+          border-radius: 10px;
+          padding: 0;
+          margin: 0;
+     }
+}
+
 
      </style>
 </head>
 
 <body onkeydown="controle(event.keyCode);">
+     <p id="command">click to the arrow to move</p>
      <p id="score">score: 0</p>
 	<canvas id="snake" width="1000" height="500"></canvas>
      <div id="github-button">
           <a class="github-button" href="https://github.com/augustin7698/snake" data-color-scheme="no-preference: light; light: light; dark: dark_dimmed;" data-size="large" aria-label="Star augustin7698/snake on GitHub">Star</a>
+     </div>
+     <div id="mobile-commmand">
+          <div>
+               <button onclick="controle(37);">⏪</button>
+               <button onclick="controle(38);">⏫</button>
+               <button onclick="controle(39);">⏩</button>
+          </div>
+          <div>
+               <button onclick="controle(40);">⏬</button>
+          </div>
      </div>
 </body>
 <script type="text/javascript">
